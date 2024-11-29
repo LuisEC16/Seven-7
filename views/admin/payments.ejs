@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Pagos</title>
+    <link rel="icon" type="image/png" href="/logoreporte.png">
+    <link rel="stylesheet" href="/css/styless.css">
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <a href="/admin/dashboard"><img class="logo" src="/Seven7.png" alt="Logo Seven7"></a>
+        </div>
+        <div class="icons">
+            <a href="/logout/admin"><img src="/Cerrarsesion.png" alt="Logout Admin" id="adminLogoutBtn"></a>
+        </div>
+    </header>
+    <nav>
+        <a href="/admin/manage-users" class="admin-btn">Gestión de Usuarios</a>
+        <a href="/admin/manage-inventory" class="admin-btn">Gestión de Inventario</a>
+        <a href="/admin/reports" class="admin-btn">Generar Reportes</a>
+        <a href="/admin/backups" class="admin-btn">Gestión de respaldos</a>
+    </nav>
+    <main class="main">
+        <section class="filters">
+            <button id="filter-all">Todo</button>
+            <button id="filter-rejected">Rechazada</button>
+            <button id="filter-inprocess">En proceso</button>
+            <button id="filter-completed">Finalizada</button>
+        </section>
+        <h2>Pagos Realizados</h2>
+        <table class="user-table" id="payments-table">
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Fecha</th>
+                    <th>Total</th>
+                    <th>Número Telefónico</th>
+                    <th>Forma de Pago</th>
+                    <th>Forma de Entrega</th>
+                    <th>Detalle del pedido</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% payments.forEach(payment => { %>
+                    <tr class="payment-row" data-status="<%= payment.Estado %>">
+                        <td><%= payment.Usuario %></td>
+                        <td class="date-cell"><%= payment.Fecha %></td>
+                        <td>$<%= payment.Total %></td>
+                        <td><%= payment.Numero_Telefonico %></td>
+                        <td><%= payment.pago %></td>
+                        <td><%= payment.entrega %></td>
+                        <td><%= payment.descripcion %></td>
+                        <td>
+                            <% if (payment.Estado === 'En proceso') { %>
+                                <form action="/admin/payments/update" method="post" onsubmit="return confirmUpdate(this);">
+                                    <input type="hidden" name="id_comprobante" value="<%= payment.ID_Comprobante %>">
+                                    <select name="estado">
+                                        <option value="En proceso" <%= payment.Estado === 'En proceso' ? 'selected' : '' %>>En proceso</option>
+                                        <option value="Finalizada">Finalizada</option>
+                                        <option value="Rechazada">Rechazada</option>
+                                    </select>
+                                    <button type="submit">Actualizar</button>
+                                </form>
+                            <% } else { %>
+                                <%= payment.Estado %>
+                            <% } %>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </main>
+    <footer>
+        <div class="logo-container">
+            <a href="/"><img class="logo" src="/Seven7.png" alt="Logo Seven7"></a>
+        </div>
+        <div class="footer-center">
+            <a href="https://maps.app.goo.gl/SsCiRCKFSDUjVTHD6" target="_blank">Maracaibo: CC Lago Mall mini tiendas</a>
+        </div>
+        <div class="footer-right">
+            <p>Seven7 &copy; 2024</p>
+        </div>
+    </footer>
+    <script>
+        document.getElementById('filter-all').addEventListener('click', function() {
+            filterPayments('');
+        });
+
+        document.getElementById('filter-rejected').addEventListener('click', function() {
+            filterPayments('Rechazada');
+        });
+
+        document.getElementById('filter-inprocess').addEventListener('click', function() {
+            filterPayments('En proceso');
+        });
+
+        document.getElementById('filter-completed').addEventListener('click', function() {
+            filterPayments('Finalizada');
+        });
+
+        function filterPayments(status) {
+            var rows = document.querySelectorAll('.payment-row');
+            rows.forEach(function(row) {
+                if (status === '' || row.getAttribute('data-status') === status) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+        function confirmUpdate(form) {
+            const estado = form.estado.value;
+            if (estado === 'Finalizada' || estado === 'Rechazada') {
+                return confirm('¿Estás seguro de cambiar el estado a ' + estado + '? El cambio será irreversible.');
+            }
+            return true;
+        }
+
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            const date = new Date(dateString);
+            return date.toLocaleDateString('es-ES', options).replace(',', '');
+        }
+
+        document.querySelectorAll('.date-cell').forEach(cell => {
+            cell.textContent = formatDate(cell.textContent);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Producto</title>
+    <link rel="icon" type="image/png" href="/logoreporte.png">
+    <link rel="stylesheet" href="/css/styless.css">
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <a href="/admin/dashboard"><img class="logo" src="/Seven7.png" alt="Logo Seven7"></a>
+        </div>
+    </header>
+    <main class="main">
+        <section class="form-container">
+            <h1>Editar Producto</h1>
+            <form action="/admin/edit-product/<%= product.ID_productos %>" method="post" enctype="multipart/form-data">
+                <label for="Nombre">Nombre del Producto:</label>
+                <input type="text" id="Nombre" name="Nombre" value="<%= product.Nombre %>" required><br>
+        
+                <label for="Descripcion">Descripción:</label>
+                <textarea id="Descripcion" name="Descripcion" required><%= product.Descripcion %></textarea><br>
+        
+                <label for="Precio">Precio:</label>
+                <input type="number" id="Precio" name="Precio" value="<%= product.Precio %>" required><br>
+        
+                <label for="Categoria">Categoría:</label>
+                <select name="Categoria" required>
+                    <option value="Prenda superior" <%= product.Categoria === 'Prenda superior' ? 'selected' : '' %>>Prenda superior</option>
+                    <option value="Prenda inferior" <%= product.Categoria === 'Prenda inferior' ? 'selected' : '' %>>Prenda inferior</option>
+                    <option value="Colecciones" <%= product.Categoria === 'Colecciones' ? 'selected' : '' %>>Colecciones</option>
+                </select><br><br>
+        
+                <label for="Descuento">Descuento:</label>
+                <input type="number" id="Descuento" name="Descuento" value="<%= product.Descuento %>" required><br>
+        
+                <h3>Tallas y Stock</h3>
+                <% tallas.forEach(talla => { %>
+                    <label for="<%= talla.Talla %>"><%= talla.Talla %>:</label>
+                    <input type="number" id="<%= talla.Talla %>" name="stock<%= talla.Talla %>" value="<%= talla.Stock %>"><br>
+                <% }) %>
+        
+                <label for="imagen">Imagen del Producto:</label>
+                <input type="file" id="imagen" name="imagen"><br>
+        
+                <button type="submit">Actualizar Producto</button>
+            </form>
+        </section>
+        
+    </main>
+    <footer>
+        <div class="logo-container">
+            <a href="/"><img class="logo" src="/Seven7.png" alt="Logo Seven7"></a>
+        </div>
+        <div class="footer-center">
+            <a href="https://maps.app.goo.gl/SsCiRCKFSDUjVTHD6" target="_blank">Maracaibo: CC Lago Mall mini tiendas</a>
+        </div>
+        <div class="footer-right">
+            <p>Seven7 &copy; 2024</p>
+        </div>
+    </footer>
+</body>
+</html>

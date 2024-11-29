@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <link rel="icon" type="image/png" href="/logoreporte.png">
+    <link rel="stylesheet" href="/css/styless.css">
+    <style>
+        .checkout-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .checkout-form, .checkout-summary {
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #fff;
+        }
+
+        .checkout-form h2, .checkout-summary h2 {
+            margin-bottom: 20px;
+        }
+
+        .checkout-form input, .checkout-form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .checkout-summary ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checkout-summary li {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 0;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .checkout-summary li:last-child {
+            border-bottom: none;
+        }
+
+        .checkout-summary .total {
+            font-weight: bold;
+        }
+
+        .checkout-summary .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #AD88C6;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .checkout-summary .btn:hover {
+            background-color: #7A60A8;
+        }
+
+        .checkout-final ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checkout-final li {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 0;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .checkout-final li:last-child {
+            border-bottom: none;
+        }
+
+        .checkout-final .total {
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <a href="/"><img class="logo" src="/Seven7.png" alt="Logo Seven7"></a>
+        </div>
+    </header>
+    <main class="checkout-container">
+        <div class="checkout-summary">
+            <h2>Informacion de la compra</h2>
+            <form action="/checkout/process-payment" method="post" id="checkout-form">
+                <div>
+                    <label for="codigo">Código</label>
+                    <select id="codigo" name="codigo" required>
+                        <option value="0414">0414</option>
+                        <option value="0424">0424</option>
+                        <option value="0412">0412</option>
+                        <option value="0416">0416</option>
+                        <option value="0426">0426</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="telefono">Número de Teléfono</label>
+                    <input type="text" id="telefono" name="telefono" required pattern="\d{7}" title="Debe ingresar exactamente 7 dígitos">
+                </div>
+            
+                <h3>Forma de Entrega</h3>
+                <div>
+                    <input type="radio" id="pickup" name="forma_entrega" value="Pick up" required>
+                    <label for="pickup"><img src="/pickup.png" alt="Pick up" class="form-icon"> Pick up</label>
+                </div>
+                <div>
+                    <input type="radio" id="delivery" name="forma_entrega" value="Delivery" required>
+                    <label for="delivery"><img src="/delivery.png" alt="Delivery" class="form-icon"> Delivery</label>
+                </div>
+                <div>
+                    <input type="radio" id="envio" name="forma_entrega" value="Envio (fuera de Maracaibo)" required>
+                    <label for="envio"><img src="/envios.png" alt="Envio" class="form-icon"> Envio (fuera de Maracaibo)</label>
+                </div>
+            
+                <h3>Forma de Pago</h3>
+                <div>
+                    <input type="radio" id="efectivo_dolares" name="forma_pago" value="Efectivo $/€" required>
+                    <label for="efectivo_dolares"><img src="/DyE.png" alt="Efectivo $/€" class="form-icon"> Efectivo $/€</label>
+                </div>
+                <div>
+                    <input type="radio" id="efectivo_bs" name="forma_pago" value="Efectivo Bs" required>
+                    <label for="efectivo_bs"><img src="/bs.png" alt="Efectivo Bs" class="form-icon"> Efectivo Bs</label>
+                </div>
+                <div>
+                    <input type="radio" id="pago_movil" name="forma_pago" value="Pago Móvil" required>
+                    <label for="pago_movil"><img src="/pagomovil.png" alt="Pago Móvil" class="form-icon"> Pago Móvil</label>
+                </div>
+
+                
+
+
+                <div class="checkout-final">
+                    <h2>Resumen Del Pedido</h2>
+                    <ul>
+                        <% products.forEach(product => { %>
+                            <li>
+                                <span><%= product.Nombre %> - <%= product.Categoria %> - Talla: <%= product.Talla %></span>
+                                <% if (product.Descuento > 0) { %>
+                                    <span>$<%= (product.Precio - (product.Precio * (product.Descuento / 100))).toFixed(2) %> x <%= product.Cantidad %></span>
+                                <% } else { %>
+                                    <span>$<%= product.Precio.toFixed(2) %> x <%= product.Cantidad %></span>
+                                <% } %>
+                            </li>
+                        <% }) %>
+                        <li class="total">
+                            <span>Total</span>
+                            <% 
+                                let total = 0;
+                                products.forEach(product => {
+                                    let precioConDescuento = product.Precio;
+                                    if (product.Descuento > 0) {
+                                        precioConDescuento = product.Precio - (product.Precio * (product.Descuento / 100));
+                                    }
+                                    total += precioConDescuento * product.Cantidad;
+                                });
+                            %>
+                            <span>$<%= total.toFixed(2) %></span>
+                            <input type="hidden" name="total" value="<%= total.toFixed(2) %>">
+                        </li>
+                    </ul>
+
+                </div>
+                <input type="hidden" id="descripcion" name="descripcion">
+                <input type="hidden" name="usuario_id" value="<%= usuario_id %>">
+                <button onclick="setDescripcion()" type="submit" <%= products.length === 0 ? 'disabled' : '' %>>Pagar ahora</button>
+            </form>
+        </div>
+
+
+    </main>
+    <footer>
+        <div class="logo-container">
+            <a href="/"><img class="logo" src="/Seven7.png" alt="Logo Seven7"></a>
+        </div>
+        <div class="footer-center">
+            <a href="https://maps.app.goo.gl/SsCiRCKFSDUjVTHD6" target="_blank">Maracaibo: CC Lago Mall mini tiendas</a>
+        </div>
+        <div class="footer-right">
+            <a href="/pdfs/quienessomos.pdf" target="_blank">¿Quiénes Somos?</a>
+            <a href="/pdfs/Politicadeprivacidad.pdf" target="_blank">FAQ</a>
+            <a href="/pdfs/atencionalcliente.pdf" target="_blank">Atencion al cliente</a>
+        </div>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const formaEntregaRadios = document.querySelectorAll('input[name="forma_entrega"]');
+            const formaPagoRadios = document.querySelectorAll('input[name="forma_pago"]');
+
+            formaEntregaRadios.forEach(radio => {
+                radio.addEventListener('change', handleFormaEntregaChange);
+            });
+
+            function handleFormaEntregaChange() {
+                const selectedFormaEntrega = document.querySelector('input[name="forma_entrega"]:checked').value;
+
+                formaPagoRadios.forEach(radio => {
+                    radio.disabled = false;
+                    if (selectedFormaEntrega === 'Envio (fuera de Maracaibo)') {
+                        if (radio.value !== 'Pago Móvil') {
+                            radio.disabled = true;
+                            radio.checked = false;
+                        }
+                    }
+                });
+            }
+        });
+        document.getElementById('telefono').addEventListener('input', function (e) {
+            // Eliminar caracteres no numéricos
+            e.target.value = e.target.value.replace(/\D/g, '');
+            // Limitar la longitud a 7 caracteres
+            if (e.target.value.length > 7) {
+                e.target.value = e.target.value.slice(0, 7);
+            }
+        });
+
+        function setDescripcion() {
+            const productos = JSON.parse('<%- JSON.stringify(products) %>');
+            let descripcion = productos.map(product => `${product.Nombre} - ${product.Categoria} - Talla: ${product.Talla} - Cts:${product.Cantidad} `).join(', ');
+            document.getElementById('descripcion').value = descripcion;
+        }
+    </script>
+</body>
+</html>

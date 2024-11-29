@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generar Reportes</title>
+    <link rel="icon" type="image/png" href="/logoreporte.png">
+    <link rel="stylesheet" href="/css/styless.css">
+    <style>
+        .container {
+            padding: 20px;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            background-color: #000;
+            color: white;
+            padding: 10px 20px;
+        }
+        .navbar h1 {
+            margin: 0;
+        }
+        .navbar .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        .navbar .nav-links a {
+            color: white;
+            text-decoration: none;
+        }
+        .navbar .nav-links a:hover {
+            text-decoration: underline;
+        }
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        form div {
+            margin-bottom: 15px;
+        }
+        form label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        form input[type="date"], form select, form button {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <a href="/admin/dashboard"><img class="logo" src="/Seven7.png" alt="Logo Seven7"></a>
+        </div>
+        <div class="icons">
+            <a href="/logout/admin"><img src="/Cerrarsesion.png" alt="Logout Admin" id="adminLogoutBtn"></a>
+        </div>
+    </header>
+    <nav>
+        <a href="/admin/manage-users" class="admin-btn">Gestión de Usuarios</a>
+        <a href="/admin/manage-inventory" class="admin-btn">Gestión de Inventario</a>
+        <a href="/admin/payments" class="admin-btn">Gestión de Pagos</a>
+        <a href="/admin/backups" class="admin-btn">Gestión de respaldos</a>
+    </nav>
+    <main class="main">
+        <div class="container">
+            <h2>Generar Reportes</h2>
+            <form action="/admin/reports/generate" method="POST">
+                <label for="reportType">Tipo de Reporte:</label>
+                <select name="reportType" id="reportType">
+                    <option value="payments">Pagos</option>
+                    <option value="users">Usuarios</option>
+                </select>
+                <label for="startDate">Fecha de Inicio:</label>
+                <input type="date" name="startDate" id="startDate">
+                <label for="endDate">Fecha de Fin:</label>
+                <input type="date" name="endDate" id="endDate">
+                <button type="submit">Generar</button>
+            </form>
+        </div>
+    </main>
+
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function(event) {
+            var startDate = new Date(document.getElementById('startDate').value);
+            var endDate = new Date(document.getElementById('endDate').value);
+
+            if (endDate < startDate) {
+                event.preventDefault();
+                alert('La fecha hasta no puede ser menor que la fecha desde');
+            }
+        });
+    </script>
+    <footer>
+        <div class="logo-container">
+            <a href="/"><img class="logo" src="/Seven7.png" alt="Logo Seven7"></a>
+        </div>
+        <div class="footer-center">
+            <a href="https://maps.app.goo.gl/SsCiRCKFSDUjVTHD6" target="_blank">Maracaibo: CC Lago Mall mini tiendas</a>
+        </div>
+        <div class="footer-right">
+            <p>Seven7 &copy; 2024</p>
+        </div>
+    </footer>
+</body>
+</html>

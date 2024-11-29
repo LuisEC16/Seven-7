@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Seven7</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        .header img {
+            width: 50px;
+        }
+        .header .title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .report-details {
+            padding: 20px;
+        }
+        .report-details h2 {
+            font-size: 16px;
+            margin: 0 0 10px;
+        }
+        .report-details p {
+            margin: 0 0 5px;
+        }
+        .table-container {
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="data:image/png;base64,<%= logoBase64 %>" alt="Seven7 Logo">
+        <div class="title">Reporte de Seven7</div>
+        <div class="date">Fecha: <%= new Date().toLocaleDateString() %></div>
+    </div>
+    <div class="report-details">
+        <h2>Tipo de Reporte: Usuarios</h2>
+        <p>Fecha de Inicio: <%= startDate %></p>
+        <p>Fecha de Fin: <%= endDate %></p>
+    </div>
+    <div class="table-container">
+        <% if (users.length > 0) { %>
+            <table>
+                <tr>
+                    <th>Nombre y Apellido</th>
+                    <th>Email</th>
+                    <th>Dirección</th>
+                    <th>Fecha</th>
+                </tr>
+                <% users.forEach(user => { %>
+                    <tr>
+                        <td><%= user.Nombre_Apellido %></td>
+                        <td><%= user.Email %></td>
+                        <td><%= user.Direccion %></td>
+                        <td><%= new Date(user.Fecha).toLocaleString() %></td>
+                    </tr>
+                <% }) %>
+            </table>
+        <% } else { %>
+            <p>No hay usuarios registrados en ese rango de fecha</p>
+        <% } %>
+    </div>
+</body>
+</html>

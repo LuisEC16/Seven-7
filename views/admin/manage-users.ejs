@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Usuarios - Administrador</title>
+    <link rel="icon" type="image/png" href="/logoreporte.png">
+    <link rel="stylesheet" href="/css/styless.css">
+    <script>
+        function toggleActionButtons() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+            const buttons = document.querySelectorAll('.action-buttons');
+            if (checkboxes.length > 0) {
+                buttons.forEach(button => button.style.display = 'inline-block');
+            } else {
+                buttons.forEach(button => button.style.display = 'none');
+            }
+        }
+
+        function selectAll(source) {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(checkbox => checkbox.checked = source.checked);
+            toggleActionButtons();
+        }
+
+        function confirmDelete() {
+            const selectedUsers = document.querySelectorAll('input[name="selectedUsers"]:checked');
+            if (selectedUsers.length === 0) {
+                alert('Selecciona al menos un usuario para eliminar.');
+                return false;
+            }
+
+            // Construir el mensaje de confirmación
+            const usersToDelete = Array.from(selectedUsers).map(user => user.parentNode.nextElementSibling.textContent).join(', ');
+            const confirmMessage = `¿Estás seguro de eliminar a ${usersToDelete}?`;
+            return confirm(confirmMessage);
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <a href="/admin/dashboard"><img class="logo" src="/Seven7.png" alt="Logo Seven7"></a>
+        </div>
+        <div class="icons">
+            <a href="/logout/admin"><img src="/Cerrarsesion.png" alt="Logout Admin" id="adminLogoutBtn"></a>
+        </div>
+    </header>
+    <nav>
+        <a href="/admin/manage-inventory" class="admin-btn">Gestión de Inventario</a>
+        <a href="/admin/payments" class="admin-btn">Gestión de Pagos</a>
+        <a href="/admin/reports" class="admin-btn">Generar Reportes</a>
+        <a href="/admin/backups" class="admin-btn">Gestión de respaldos</a>
+    </nav>
+    <main class="main">
+        <h1>Gestión de Usuarios</h1>
+        <h2>Lista de Usuarios</h2>
+        <table class="user-table">
+            <% if (locals.success && locals.success.length > 0) { %>
+                <div class="success-message">
+                    <%= locals.success %>
+                </div>
+            <% } %>
+
+            <% if (locals.error && locals.error.length > 0) { %>
+                <div class="error-message">
+                    <%= locals.error %>
+                </div>
+            <% } %>
+
+             <form id="manage-users-form" method="POST">
+            
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" onclick="selectAll(this)">Nombre</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% users.forEach(user => { %>
+                        <tr>
+                            <td class="checkbox-name">
+                                <input type="checkbox" name="selectedUsers" value="<%= user.id %>" onclick="toggleActionButtons()">
+                                <span class="user-name"><%= user.Nombre_Apellido %></span>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>                
+        </table>
+            <div class="action-buttons" style="display: none;">
+                <button type="submit" formaction="/admin/edit-users" formmethod="POST">Modificar</button>
+                <button type="submit" formaction="/admin/delete-users" formmethod="POST" onclick="return confirmDelete()">Eliminar</button>
+            </div>
+        </form>
+        </table>
+    </main>
+    <footer>
+        <div class="logo-container">
+            <a href="/"><img class="logo" src="/Seven7.png" alt="Logo Seven7"></a>
+        </div>
+        <div class="footer-center">
+            <a href="https://maps.app.goo.gl/SsCiRCKFSDUjVTHD6" target="_blank">Maracaibo: CC Lago Mall mini tiendas</a>
+        </div>
+        <div class="footer-right">
+            <p>Seven7 &copy; 2024</p>
+        </div>
+    </footer>
+</body>
+</html>

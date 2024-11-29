@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito de Compras</title>
+    <link rel="icon" type="image/png" href="/logoreporte.png">
+    <link rel="stylesheet" href="/css/styless.css">
+</head>
+<style>
+    .quantity-select {
+        display: inline-block;
+        position: relative;
+    }
+    .quantity-select select {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background: none;
+        border: 1px solid #ccc;
+        padding: 5px 10px;
+        border-radius: 25px;
+        font-size: 16px;
+        cursor: pointer;
+        text-align-last: center;
+    }
+    .quantity-select:after {
+        content: '\25BC'; /* Down arrow */
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+    }
+    .talla {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 2px solid #000;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 36px;
+    margin-right: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    }
+
+    .talla.inactive {
+        opacity: 0.3;
+        cursor: not-allowed;
+    }
+
+    .talla.selected {
+        background-color: #ff6f61; /* Color de la talla seleccionada */
+        color: #fff;
+    }
+
+</style>
+<body>
+    <header>
+        <div class="logo-container">
+            <a href="/catalog"><img class="logo" src="/Seven7.png" alt="Logo Seven7"></a>
+        </div>
+        <div class="icons">
+            <a href="/login"><img src="/iconousuario.png" alt="Login" id="user-icon"></a>
+            <a href="/cart"><img src="/carritocompras.png" alt="Carrito" id="cartBtn"></a>
+        </div>
+    </header>
+    <main class="main">
+        <h1>Carrito de Compras</h1>
+        <% if (typeof errorMessage !== 'undefined') { %>
+            <p style="color: red;"><%= errorMessage %></p>
+        <% } %>
+        <div class="cart-container">
+            <div class="cart-items">
+                <% if (products.length > 0) { %>
+                    <% products.forEach(product => { %>
+                        <div class="cart-item">
+                            <% if (product.Imagen) { %>
+                                <img src="/uploads/<%= product.Imagen %>" alt="<%= product.Nombre %>">
+                            <% } %>
+                            <div class="product-info">
+                                <h2><%= product.Nombre %></h2>
+                                <% if (product.Descuento > 0) { %>
+                                    <p>Precio: $ <s><%= product.Precio %></s></p>
+                                    <p>Precio con Descuento: $<%= (product.Precio - (product.Precio * (product.Descuento / 100))).toFixed(2) %></p>
+                                    <p>Descuento: <%= product.Descuento %> %</p>
+                                <% } else { %>
+                                    <p>Precio: $<%= product.Precio %></p>
+                                <% } %>
+                                <p>Talla:</p>
+                                <div class="tallas">
+                                    <% product.tallas.forEach(talla => { %>
+                                        <div class="talla <%= talla.Stock > 0 ? '' : 'inactive' %> <%= talla.Talla === product.Talla ? 'selected' : '' %>" data-talla="<%= talla.Talla %>" data-product-id="<%= product.ID_productos %>">
+                                            <%= talla.Talla %>
+                                        </div>
+                                    <% }) %>
+                                </div>
+                                <p>Cantidad:</p>
+                                <form action="/cart/update" method="post" class="update-quantity-form">
+                                    <input type="hidden" name="id" value="<%= product.ID_productos %>">
+                                    <select name="cantidad" data-product-id="<%= product.ID_productos %>">
+                                        <% for (let i = 1; i <= 10; i++) { %>
+                                            <option value="<%= i %>" <%= product.Cantidad == i ? 'selected' : '' %>><%= i %></option>
+                                        <% } %>
+                                    </select>
+                                </form>
+                                <form action="/cart/remove-from-cart/<%= product.ID_productos %>" method="post">
+                                    <button type="submit">Eliminar</button>
+                                </form>
+                            </div>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <p>El carrito está vacío</p>
+                <% } %>
+            </div>
+            
+            <div class="cart-summary">
+                <h2>Resumen del Pedido</h2>
+                <p>Total: $<%= total %></p>
+                <form action="/checkout" method="get">
+                    <input type="hidden" name="usuario_id" value="<%= usuario_id %>">
+                    <button type="submit" <%= products.length === 0 ? 'disabled' : '' %>>Pagar ahora</button>
+                </form>
+            </div>
+        </div>
+    </main>
+</body>
+<footer>
+    <div class="logo-container">
+        <a href="/"><img class="logo" src="/Seven7.png" alt="Logo Seven7"></a>
+    </div>
+    <div class="footer-center">
+        <a href="https://maps.app.goo.gl/SsCiRCKFSDUjVTHD6" target="_blank">Maracaibo: CC Lago Mall mini tiendas</a>
+    </div>
+    <div class="footer-right">
+        <a href="/pdfs/quienessomos.pdf" target="_blank">¿Quiénes Somos?</a>
+        <a href="/pdfs/Politicadeprivacidad.pdf" target="_blank">FAQ</a>
+        <a href="/pdfs/atencionalcliente.pdf" target="_blank">Atencion al cliente</a>
+    </div>
+</footer>
+<script src="/js/auth.js"></script>
+<script>
+    document.querySelectorAll('.talla').forEach(tallaElement => {
+        tallaElement.addEventListener('click', function() {
+            if (this.classList.contains('inactive')) return;
+            const selectedTalla = this.getAttribute('data-talla');
+            const productId = this.getAttribute('data-product-id');
+            
+            fetch('/cart/update-talla', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ productId, talla: selectedTalla }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Error al actualizar la talla');
+                }
+            })
+            .catch(error => {
+                console.error('Error al actualizar la talla:', error);
+            });
+        });
+    });
+
+    document.querySelectorAll('select[name="cantidad"]').forEach(selectElement => {
+        selectElement.addEventListener('change', function() {
+            const productId = this.getAttribute('data-product-id');
+            const cantidad = this.value;
+            
+            fetch('/cart/update-cantidad', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ productId, cantidad }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Error al actualizar la cantidad');
+                }
+            })
+            .catch(error => {
+                console.error('Error al actualizar la cantidad:', error);
+            });
+        });
+    });
+</script>
+</html>

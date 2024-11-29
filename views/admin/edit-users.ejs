@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Usuario - Administrador</title>
+    <link rel="icon" type="image/png" href="/logoreporte.png">
+    <link rel="stylesheet" href="/css/styless.css">
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <a href="/admin/dashboard"><img class="logo" src="/Seven7.png" alt="Logo Seven7"></a>
+        </div>
+    </header>
+    <main class="main">
+        <section class="form-container">
+            <h2>Editar Usuarios</h2>
+            <% users.forEach(user => { %>
+                <form action="/admin/update-user" method="POST">
+                    <input type="hidden" name="ID" value="<%= user.ID %>">
+                    <label for="Nombre_Apellido">Nombre:</label>
+                    <input type="text" id="Nombre_Apellido" name="Nombre_Apellido" value="<%= user.Nombre_Apellido %>" required><br><br>
+                            
+                    <label for="Direccion">Dirección:</label>
+                    <input type="text" id="Direccion" name="Direccion" value="<%= user.Direccion %>"><br><br>
+                            
+                    <label for="Email">Email:</label>
+                    <input type="email" id="Email" name="Email" value="<%= user.Email %>" required><br><br>
+                            
+                    <label for="Contrasena">Contraseña:</label>
+                    <input type="password" id="Contrasena" name="Contrasena" placeholder="Introduce nueva contraseña">
+                    <small>Deja este campo vacío si no deseas cambiar la contraseña.</small><br><br>
+                            
+                    <button type="submit">Guardar Cambios</button>
+                </form>
+            <% }) %>
+        </section>
+    </main>
+    <footer>
+        <div class="logo-container">
+            <a href="/"><img class="logo" src="/Seven7.png" alt="Logo Seven7"></a>
+        </div>
+        <div class="footer-center">
+            <a href="https://maps.app.goo.gl/SsCiRCKFSDUjVTHD6" target="_blank">Maracaibo: CC Lago Mall mini tiendas</a>
+        </div>
+        <div class="footer-right">
+            <p>Seven7 &copy; 2024</p>
+        </div>
+    </footer>
+</body>
+</html>

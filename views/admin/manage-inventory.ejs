@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrar Inventario</title>
+    <link rel="icon" type="image/png" href="/logoreporte.png">
+    <link rel="stylesheet" href="/css/styless.css">
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <a href="/admin/dashboard"><img class="logo" src="/Seven7.png" alt="Logo Seven7"></a>
+        </div>
+        <div class="icons">
+            <a href="/logout/admin"><img src="/Cerrarsesion.png" alt="Logout Admin" id="adminLogoutBtn"></a>
+        </div>
+    </header>
+    <nav>
+        <a href="/admin/manage-users" class="admin-btn">Gestión de Usuarios</a>
+        <a href="/admin/payments" class="admin-btn">Gestión de Pagos</a>
+        <a href="/admin/reports" class="admin-btn">Generar Reportes</a>
+        <a href="/admin/backups" class="admin-btn">Gestión de respaldos</a>
+    </nav>
+    <main class="main">
+        <section class="form-container">
+            <h1>Administrar Inventario</h1>
+
+            <% if (successMessage && successMessage.length > 0) { %>
+                <div class="success-message">
+                    <p><%= successMessage %></p>
+                </div>
+            <% } %>
+
+            <% if (errorMessage && errorMessage.length > 0) { %>
+                <div class="error-message">
+                    <p><%= errorMessage %></p>
+                </div>
+            <% } %>
+
+            <h2>Añadir Producto</h2>
+            <form action="/admin/add-product" method="POST" enctype="multipart/form-data">
+                <label for="Nombre">Nombre:</label>
+                <input type="text" id="Nombre" name="Nombre" required>
+            
+                <label for="Descripcion">Descripción:</label>
+                <input type="text" id="Descripcion" name="Descripcion" required>
+            
+                <label for="Precio">Precio:</label>
+                <input type="number" step="0.01" id="Precio" name="Precio" required>
+            
+                <label for="Categoria">Categoría:</label>
+                <select name="Categoria" required>
+                    <option value="">Seleccione una categoría</option>
+                    <option value="Prenda superior">Prenda superior</option>
+                    <option value="Prenda inferior">Prenda inferior</option>
+                    <option value="Colecciones">Colecciones</option>
+                </select><br><br>
+            
+                <label for="Descuento">Descuento:</label>
+                <input type="number" step="0.01" id="Descuento" name="Descuento">
+            
+                <label>Tallas:</label><br>
+                <input type="checkbox" id="XS" name="tallas" value="XS" onclick="toggleStockInput('stockXS')"> XS
+                <input type="number" id="stockXS" name="stockXS" placeholder="Stock XS" style="display: none;"><br>
+                <input type="checkbox" id="S" name="tallas" value="S" onclick="toggleStockInput('stockS')"> S
+                <input type="number" id="stockS" name="stockS" placeholder="Stock S" style="display: none;"><br>
+                <input type="checkbox" id="M" name="tallas" value="M" onclick="toggleStockInput('stockM')"> M
+                <input type="number" id="stockM" name="stockM" placeholder="Stock M" style="display: none;"><br>
+                <input type="checkbox" id="L" name="tallas" value="L" onclick="toggleStockInput('stockL')"> L
+                <input type="number" id="stockL" name="stockL" placeholder="Stock L" style="display: none;"><br>
+                <input type="checkbox" id="XL" name="tallas" value="XL" onclick="toggleStockInput('stockXL')"> XL
+                <input type="number" id="stockXL" name="stockXL" placeholder="Stock XL" style="display: none;"><br>
+            
+                <label for="imagen">Imagen:</label>
+                <input type="file" id="imagen" name="imagen" accept="image/*">
+            
+                <button type="submit">Añadir Producto</button>
+            </form>
+        </section>
+        <section class="inventory-management">
+            <h2>Inventario Actual</h2>
+            <div class="inventory-container">
+                <% products.forEach(product => { %>
+                    <div class="product">
+                        <h2><%= product.Nombre %></h2>
+                        <p><%= product.Descripcion %></p>
+                        <p>Precio: $<%= product.Precio %></p>
+                        <p>Categoría: <%= product.Categoria %></p>
+                        <p>Descuento: <%= product.Descuento %> %</p>
+                        <p>Stock por talla: </p>
+                        <p><%= product.StockPorTalla %></p>
+                        <p>Stock total: <%= product.StockTotal %></p>
+                        <img src="/uploads/<%= product.Imagen %>" alt="<%= product.Nombre %>">
+                        <form action="/admin/edit-product/<%= product.ID_productos %>" method="get">
+                            <button type="submit" class="edit-button">Editar</button>
+                        </form>
+                        <form action="/admin/delete-product/<%= product.ID_productos %>" method="post" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este producto?');">
+                            <button type="submit" class="delete-button">Eliminar</button>
+                        </form>
+                    </div>
+                <% }) %>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <div class="logo-container">
+            <a href="/"><img class="logo" src="/Seven7.png" alt="Logo Seven7"></a>
+        </div>
+        <div class="footer-center">
+            <a href="https://maps.app.goo.gl/SsCiRCKFSDUjVTHD6" target="_blank">Maracaibo: CC Lago Mall mini tiendas</a>
+        </div>
+        <div class="footer-right">
+            <p>Seven7 &copy; 2024</p>
+        </div>
+    </footer>
+    <script>
+        function toggleStockInput(id) {
+            const input = document.getElementById(id);
+            input.style.display = input.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html>

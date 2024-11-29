@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/logoreporte.png">
+    <link rel="stylesheet" href="/css/styless.css">
+    <title>Perfil de Usuario</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #FAF3E0;
+        }
+        .container {
+            padding: 20px;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            background-color: #000;
+            color: white;
+            padding: 10px 20px;
+        }
+        .navbar h1 {
+            margin: 0;
+        }
+        .navbar .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        .navbar .nav-links a {
+            color: white;
+            text-decoration: none;
+        }
+        .navbar .nav-links a:hover {
+            text-decoration: underline;
+        }
+        .buttons {
+            margin-bottom: 20px;
+        }
+        .buttons button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        .buttons button:hover {
+            background-color: #0056b3;
+        }
+        .hidden {
+            display: none;
+        }
+        .visible {
+            display: block;
+        }
+        .message {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .message.success {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+        .message.error {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        form div {
+            margin-bottom: 15px;
+        }
+        form label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        form input[type="text"],
+        form input[type="email"],
+        form input[type="password"] {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        button[type="submit"] {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <a href="/"><img class="logo" src="/Seven7.png" alt="Logo Seven7"></a>
+        </div>
+        <div class="icons">
+            <a href="/login"><img src="/iconousuario.png" alt="Login" id="user-icon"></a>
+            <a href="/cart"><img src="/carritocompras.png" alt="Carrito" id="cartBtn"></a>
+            <a href="/logout"><img src="/Cerrarsesion.png" alt="Logout User" id="userLogoutBtn"></a>
+        </div>
+
+    </header>
+    <main class="main">
+        <div class="container">
+            <section class="filters">
+                <button id="account-settings">Configuración de la cuenta</button>
+                <button id="purchase-history">Historial de compras</button>
+            </section>
+            <% if (successMessage) { %>
+                <p><%= successMessage %></p>
+            <% } %>
+            <% if (errorMessage) { %>
+                <p><%= errorMessage %></p>
+            <% } %>
+    
+            <!-- Sección de Configuración de la Cuenta -->
+            <div id="account-info" class="visible">
+                <h2>Perfil de Usuario</h2>
+                <form action="/profile/update" method="POST">
+                    <div>
+                        <label for="userName">Nombre:</label>
+                        <input type="text" id="userName" name="userName" value="<%= userName %>" required>
+                    </div>
+                    <div>
+                        <label for="userLastName">Apellido:</label>
+                        <input type="text" id="userLastName" name="userLastName" value="<%= userLastName %>" required>
+                    </div>
+                    <div>
+                        <label for="userEmail">Email:</label>
+                        <% if (validationToken) { %>
+                            <p style="color: red;">Por favor, confirma tu nuevo correo para completar la actualización.</p>
+                        <% } %>
+                        <input type="email" id="userEmail" name="userEmail" value="<%= userEmail %>" required>
+                    </div>
+                    <div>
+                        <label for="userAddress">Dirección:</label>
+                        <input type="text" id="userAddress" name="userAddress" value="<%= userAddress %>" required>
+                    </div>
+                    <div>
+                        <label for="userPassword">Nueva Contraseña:</label>
+                        <input type="password" id="userPassword" name="userPassword">
+                        <small>Deja este campo vacío si no deseas cambiar la contraseña</small>
+                    </div>
+                    <button type="submit">Actualizar Información</button>
+                </form>
+    
+                <form id="delete-account-form" action="/profile/delete-account" method="post" onsubmit="return confirm('¿Está seguro de eliminar su cuenta?');">
+                    <button type="submit" class="btn btn-danger">Eliminar cuenta</button>
+                </form>     
+            </div>
+    
+            <!-- Sección de Historial de Compras -->
+            <div id="history-info" class="hidden">
+                <h2>Historial de Compras</h2>
+                <% if (comprobante.length > 0) { %>
+                    <table>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Total</th>
+                            <th>Numero_Telefonico</th>
+                            <th>Pago</th>
+                            <th>Entrega</th>
+                            <th>Estado</th>
+                        </tr>
+                        <% comprobante.forEach(function(comprobante) { %>
+                            <tr>
+                                <td class="date-cell"><%= comprobante.Fecha %></td>
+                                <td><%= comprobante.Total %></td>
+                                <td><%= comprobante.Numero_Telefonico %></td>
+                                <td><%= comprobante.pago %></td>
+                                <td><%= comprobante.entrega %></td>
+                                <td><%= comprobante.Estado %></td>
+                            </tr>
+                        <% }); %>
+                    </table>
+                <% } else { %>
+                    <p>No hay compras registradas.</p>
+                <% } %>
+            </div>
+        </div>
+    
+        <script src="/js/auth.js"></script>
+    
+        <script>
+            document.getElementById('account-settings').addEventListener('click', function(event) {
+                event.preventDefault();
+                document.getElementById('account-info').classList.add('visible');
+                document.getElementById('account-info').classList.remove('hidden');
+                document.getElementById('history-info').classList.add('hidden');
+                document.getElementById('history-info').classList.remove('visible');
+            });
+    
+            document.getElementById('purchase-history').addEventListener('click', function(event) {
+                event.preventDefault();
+                document.getElementById('account-info').classList.add('hidden');
+                document.getElementById('account-info').classList.remove('visible');
+                document.getElementById('history-info').classList.add('visible');
+                document.getElementById('history-info').classList.remove('hidden');
+            });
+    
+            function formatDate(dateString) {
+                const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+                const date = new Date(dateString);
+                return date.toLocaleDateString('es-ES', options).replace(',', '');
+            }
+    
+            document.querySelectorAll('.date-cell').forEach(cell => {
+                cell.textContent = formatDate(cell.textContent);
+            });
+    
+        </script>
+    </main>
+
+    <footer>
+        <div class="logo-container">
+            <a href="/"><img class="logo" src="/Seven7.png" alt="Logo Seven7"></a>
+        </div>
+        <div class="footer-center">
+            <a href="https://maps.app.goo.gl/SsCiRCKFSDUjVTHD6" target="_blank">Maracaibo: CC Lago Mall mini tiendas</a>
+        </div>
+        <div class="footer-right">
+            <a href="/pdfs/quienessomos.pdf" target="_blank">¿Quiénes Somos?</a>
+            <a href="/pdfs/Politicadeprivacidad.pdf" target="_blank">FAQ</a>
+            <a href="/pdfs/atencionalcliente.pdf" target="_blank">Atencion al cliente</a>
+        </div>
+    </footer>
+</body>
+</html>

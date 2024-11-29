@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar sesión - Administrador</title>
+    <link rel="icon" type="image/png" href="/logoreporte.png">
+    <link rel="stylesheet" href="/css/styless.css">
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <a href="/"><img class="logo" src="/Seven7.png" alt="Logo Seven7"></a>
+        </div>
+        <div class="admin-header">
+            <span>Administrador</span>
+        </div>
+    </header>
+    <main class="main">
+        <section class="form-container">
+            <h1>Iniciar sesión como Administrador</h1>
+            <% if (error) { %>
+                <p style="color: red;"><%= error %></p>
+            <% } %>
+            <form action="/admin/login" method="POST">
+                <label for="Usuario">Usuario:</label>
+                <input type="text" id="Usuario" name="Usuario" required>
+                <br>
+                <label for="Contrasena">Contraseña:</label>
+                <input type="password" id="Contrasena" name="Contrasena" required>
+                <br>
+                <button type="submit">Iniciar sesión</button>
+        </section>
+    </main>
+    <footer>
+        <div class="logo-container">
+            <a href="/"><img class="logo" src="/Seven7.png" alt="Logo Seven7"></a>
+        </div>
+        <div class="footer-center">
+            <a href="https://maps.app.goo.gl/SsCiRCKFSDUjVTHD6" target="_blank">Maracaibo: CC Lago Mall mini tiendas</a>
+        </div>
+        <div class="footer-right">
+            <p>Seven7 &copy; 2024</p>
+        </div>
+    </footer>
+</body>
+</html>

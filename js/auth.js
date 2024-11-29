@@ -10,6 +10,6 @@ document.getElementById('user-icon').addEventListener('click', function(event) {
             }
         })
         .catch(error => {
-            console.error('Error al verificar la autenticación:', error);
+            console.error('Error al verificar la autenticación:', error);//hola
         });
 });
